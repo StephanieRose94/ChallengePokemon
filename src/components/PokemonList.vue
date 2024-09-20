@@ -3,12 +3,11 @@
 		<LoadingPokeball v-if="load" :loading="load"></LoadingPokeball>
 		<div v-if="!load" class="fade">
 			<v-text-field solo placeholder="Search" v-model="searchQuery" class="filter mb-3" @input="filterPokemon"></v-text-field>
-			<div v-if="pokemonFound">
-				<v-card v-bind="attrs"
-				v-on="on" v-for="pokemon in listFilter" :key="pokemon.id" elevation="0" class="pa-3 pl-5 pr-5 mb-3 d-flex justify-space-between">
+			<div v-if="pokemonFound" >
+				<v-card  v-for="pokemon in listFilter" :key="pokemon.id" @click="openModal(pokemon.name)" elevation="0" class="pa-3 pl-5 pr-5 mb-3 d-flex justify-space-between">
 					<h3 class="name">{{ pokemon.name }}</h3>
 					<div class="containIcon">
-						<iconStar iconStyle="icon-star"></iconStar>
+						<i class="fa-solid fa-star icon-star"></i>
 					</div>
 				</v-card>
 			</div>
@@ -22,17 +21,18 @@
 				</v-col>
 			</div>
 		</div>
+		<DetailsPokemon v-if="isModalOpen" :id="selectedId" @close="isModalOpen = false" ></DetailsPokemon>
 		<v-col v-if="pokemonFound" class="buttons-footer d-flex justify-center" cols="12">
 			<v-row class="globalContain">
 				<v-col cols="6" class="pt-1">
 					<v-btn rounded dark block class="principal-button primary mt-5 pa-3 mb-2" @click="goHome()">
-						<iconList iconStyle="icon-button pr-1"></iconList>
+						<i class="fa-solid fa-list-ul icon-button pr-1"></i>
 						<p class="mb-0">All</p>
 					</v-btn>
 				</v-col>
 				<v-col cols="6" class="pt-1">
 					<v-btn rounded dark block class="principal-button primary mt-5 pa-3 mb-2" @click="goHome()">
-						<iconStar iconStyle="icon-button pr-1"></iconStar> 
+						<i class="fa-solid fa-star icon-button pr-1"></i>
 						<p class="mb-0">Favorites</p>
 					</v-btn>
 				</v-col>
@@ -44,9 +44,7 @@
 <script>
 	import axios from "axios";
 	import LoadingPokeball from "@/components/LoadingPokeball.vue";
-	import iconStar from "@/components/icons/iconStar.vue";
-	import iconList from "@/components/icons/iconList.vue";
-	// import DetailsPokemon from "@/components/DetailsPokemon.vue";
+	import DetailsPokemon from "@/components/DetailsPokemon.vue";
 	
 	export default{
 		data() {
@@ -55,6 +53,8 @@
 				listFilter:[],
 				load: true,
 				searchQuery: '',
+				selectedId: null,
+				isModalOpen: false,
 	
 			}
 		},
@@ -83,7 +83,11 @@
 			goHome(){
 				console.log("click");
 				this.$router.push({ name: "PokemonList" });
-			}
+			},
+			openModal(id) {
+				this.selectedId = id;
+				this.isModalOpen = true;
+			},
 		},
 		computed: {
 			pokemonFound(){
@@ -92,9 +96,7 @@
 		},
 		components: {
 			LoadingPokeball,
-			iconStar,
-			iconList,
-			// DetailsPokemon
+			DetailsPokemon
 		}
 	}
 </script>
@@ -115,8 +117,8 @@
 		box-shadow:  0px 5px 5px 0px rgb(0 0 0 / 5%) !important;    
 	}
 	.icon-star{
-		fill: var(--disabled-grey);
-		width: 26px;
+		color: var(--disabled-grey);
+		font-size: 26px;
 	}
 	.name{
 		color: var(--principal-grey);
@@ -125,10 +127,9 @@
 	}
 	.containIcon{
 		width: auto;
-		height: auto;
 		background-color: var(--second-grey);
 		border-radius: 50px !important;
-		padding: 5px 5px 2px 5px;
+		padding: 5px 5px 5px 5px;
 	}
 	.buttons-footer{
 		position: absolute;
@@ -140,7 +141,7 @@
 		box-shadow: 0px -5px 5px -0px rgb(0 0 0 / 10%)
 	}
 	.icon-button{
-		fill: white;
-		width: 22px;
+		color: white;
+		font-size: 22px;
 	}	
 </style>
