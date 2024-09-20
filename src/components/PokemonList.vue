@@ -8,7 +8,7 @@
 				<v-card  v-for="pokemon in listFilter" :key="pokemon.id" @click="openModal(pokemon.name)" elevation="0" class="pa-3 pl-5 pr-5 mb-3 d-flex justify-space-between">
 					<h3 class="name">{{ pokemon.name }}</h3>
 					<div class="containIcon">
-						<i class="fa-solid fa-star icon-star"></i>
+						<i class="fa-solid fa-star icon-star" :class="isFavorite(pokemon.name) ? 'starActive' : 'starDisactive' "></i>
 					</div>
 				</v-card>
 			</div>
@@ -88,7 +88,7 @@
 			openModal(id) {
 				this.selectedId = id;
 				this.isModalOpen = true;
-			},
+			}
 		},
 		computed: {
 			pokemonFound(){
@@ -96,6 +96,9 @@
 			},
 			favorites() {
 				return this.$store.getters.getFavorites;
+			},
+			isFavorite() {
+				return (pokemon) => this.$store.getters.isFavorite(pokemon);
 			}
 		},
 		components: {

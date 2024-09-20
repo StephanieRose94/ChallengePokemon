@@ -21,6 +21,9 @@ export default new Vuex.Store(
 		getters: {
 			getFavorites: state => state.favorites,
 
+			isFavorite: (state) => (pokemon) => {
+				return state.favorites.some(p => p === pokemon);
+			}
 		}
 	}
 )
