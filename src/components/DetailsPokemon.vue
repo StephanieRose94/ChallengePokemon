@@ -24,8 +24,11 @@
 							</v-btn>
 						</v-col>
 						<v-col cols="6" class="d-flex justify-end">							
-							<div class="containIcon">
-								<i class="fa-solid fa-star icon-star"></i>
+							<div v-if="!favorite" class="containIcon" @click="addToFavorites(pokemon.name)">
+								<i class="fa-solid fa-star icon-star starDisactive"></i>
+							</div>
+							<div v-else class="containIcon" @click="removeToFavorites(pokemon.name)">
+								<i class="fa-solid fa-star icon-star starActive"></i>
 							</div>
 						</v-col>
 					</v-row>
@@ -46,7 +49,9 @@
 			return {
 				pokemon:{},
 				imagePokemon:'',
+				name:'',
 				isOpen: true,
+				favorite:false
 			}
 		},
 		props: {
@@ -65,14 +70,18 @@
 			},
 		},
 	},
+	mounted() {
+			this.valFavorite()
+		},
 		methods: {
 			async getPokemon(id){
 				try {
 					console.log(id);
 					axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`).then(res => {
 						this.pokemon = res.data
-						console.log(res.data);
+						this.name = res.data.name
 						this.imagePokemon = res.data.sprites.other.dream_world.front_default
+						this.valFavorite(this.name)
 					})
 				} catch(error)  {
 					console.log(error);
@@ -81,13 +90,25 @@
 			close() {
 				this.$emit('close');
 			},
-		},
-		computed: {
-			typesNames() {
-				return this.pokemon.types.map(item => item.type.name).join(', ');
+			addToFavorites(pokemon) {
+				this.$store.commit('ADD_FAVORITE', pokemon)
+				this.favorite = true
+			},
+			removeToFavorites(pokemon) {
+				this.$store.commit('REMOVE_FAVORITE', pokemon)
+				this.favorite = false
+			},
+			valFavorite(name) {
+					const list = this.$store.getters.getFavorites;
+					this.favorite = list.includes(name)
+				},
+			},
+			computed: {
+				typesNames() {
+					return this.pokemon.types.map(item => item.type.name).join(', ');
+				}
 			}
-		}
-	
+
 	}
 </script>
 

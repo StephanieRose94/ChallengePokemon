@@ -1,6 +1,7 @@
 <template>
 	<div class="globalContain containList">
 		<LoadingPokeball v-if="load" :loading="load"></LoadingPokeball>
+		{{favorites}}-------
 		<div v-if="!load" class="fade">
 			<v-text-field solo placeholder="Search" v-model="searchQuery" class="filter mb-3" @input="filterPokemon"></v-text-field>
 			<div v-if="pokemonFound" >
@@ -92,6 +93,9 @@
 		computed: {
 			pokemonFound(){
 				return this.listFilter.length > 0 ? true : false;
+			},
+			favorites() {
+				return this.$store.getters.getFavorites;
 			}
 		},
 		components: {
@@ -117,8 +121,13 @@
 		box-shadow:  0px 5px 5px 0px rgb(0 0 0 / 5%) !important;    
 	}
 	.icon-star{
-		color: var(--disabled-grey);
 		font-size: 26px;
+	}
+	.starActive{
+		color: var(--yellow);
+	}
+	.starDisactive{
+		color: var(--disabled-grey);
 	}
 	.name{
 		color: var(--principal-grey);
