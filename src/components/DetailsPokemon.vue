@@ -80,7 +80,7 @@
 					axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`).then(res => {
 						this.pokemon = res.data
 						this.name = res.data.name
-						this.imagePokemon = res.data.sprites.other.dream_world.front_default
+						this.imagePokemon = res.data.sprites.other['official-artwork'].front_default
 						this.valFavorite(this.name)
 					})
 				} catch(error)  {

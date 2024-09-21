@@ -1,9 +1,11 @@
 <template>
 	<div class="globalContain containList">
 		<LoadingPokeball v-if="load" :loading="load"></LoadingPokeball>
-		{{favorites}}-------
 		<div v-if="!load" class="fade">
-			<v-text-field solo placeholder="Search" v-model="searchQuery" class="filter mb-3" @input="filterPokemon"></v-text-field>
+			<div class="containSearch">
+				<i class="fa-solid fa-magnifying-glass"></i>
+				<v-text-field solo placeholder="Search" v-model="searchQuery" class="filter mb-3" @input="filterPokemon"></v-text-field>
+			</div>
 			<div v-if="pokemonFound" >
 				<v-card  v-for="pokemon in listFilter" :key="pokemon.id" @click="openModal(pokemon.name)" elevation="0" class="pa-3 pl-5 pr-5 mb-3 d-flex justify-space-between">
 					<h3 class="name">{{ pokemon.name }}</h3>
@@ -26,13 +28,13 @@
 		<v-col v-if="pokemonFound" class="buttons-footer d-flex justify-center" cols="12">
 			<v-row class="globalContain">
 				<v-col cols="6" class="pt-1">
-					<v-btn rounded dark block class="principal-button primary mt-5 pa-3 mb-2" @click="goHome()">
+					<v-btn rounded dark block class="principal-button  mt-5 pa-3 mb-2" :class="!favoritesActive ? 'primary' : 'info'" @click="allPokemons()">
 						<i class="fa-solid fa-list-ul icon-button pr-1"></i>
 						<p class="mb-0">All</p>
 					</v-btn>
 				</v-col>
 				<v-col cols="6" class="pt-1">
-					<v-btn rounded dark block class="principal-button primary mt-5 pa-3 mb-2" @click="goHome()">
+					<v-btn rounded dark block class="principal-button mt-5 pa-3 mb-2" :class="favoritesActive ? 'primary' : 'info'" @click="favoritePokemons()">
 						<i class="fa-solid fa-star icon-button pr-1"></i>
 						<p class="mb-0">Favorites</p>
 					</v-btn>
@@ -52,6 +54,8 @@
 			return {
 				pokemons: [],
 				listFilter:[],
+				listFilterFavorites:[],
+				favoritesActive:false,
 				load: true,
 				searchQuery: '',
 				selectedId: null,
@@ -62,9 +66,19 @@
 		mounted() {
 			this.getPokemons()
 		},
+		watch:{
+			searchQuery(newVal){
+				console.log(newVal, '------------');
+				if (newVal == '') {
+					console.log('entro');
+					this.clearSearch()
+				}
+	
+			}
+		},
 		methods: {
 			getPokemons(){
-				axios.get('https://pokeapi.co/api/v2/pokemon').then(res => {
+				axios.get('https://pokeapi.co/api/v2/pokemon?offset=0&limit=649').then(res => {
 					setTimeout(() => {
 							this.load = false;
 					}, 2000);
@@ -76,18 +90,51 @@
 				})
 			},
 			filterPokemon(){
-				console.log('Búsqueda:', this.searchQuery);
-				this.listFilter = this.pokemons.filter(pokemon =>
-				pokemon.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+				
+				// if (this.favoritesActive == true) {
+				// 	const listFilterFav = this.listFilter 
+				// 	console.log(listFilterFav, 'lista favoritos');
+				// 	this.listFilter = listFilterFav.filter(pokemon =>
+				// 	pokemon.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+				// 	);
+				// } else {	
+				// 	this.listFilter = this.pokemons.filter(pokemon =>
+				// 	pokemon.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+				// 	);
+				// }
+				const list = this.getListPokemon()
+				this.listFilter = this.filterPokemonSearch(list)
+			},
+			filterPokemonSearch(list){
+				return list.filter(pokemon =>
+					pokemon.name.toLowerCase().includes(this.searchQuery.toLowerCase())
 				);
+			},
+			clearSearch(){
+				this.listFilter = this.getListPokemon()
+			},
+			getListPokemon(){
+				return this.favoritesActive == true ? this.listFilterFavorites : this.pokemons
 			},
 			goHome(){
 				console.log("click");
-				this.$router.push({ name: "PokemonList" });
+				this.$router.push({ name: "Welcome" });
 			},
 			openModal(id) {
 				this.selectedId = id;
 				this.isModalOpen = true;
+			},
+			favoritePokemons() {
+				this.favoritesActive=true
+				this.listFilterFavorites = this.pokemons.filter(pokemon =>
+					this.favorites.includes(pokemon.name.toLowerCase())
+				);
+				this.listFilter = this.listFilterFavorites
+
+		},
+			allPokemons(){
+				this.listFilter = this.pokemons
+				this.favoritesActive=false
 			}
 		},
 		computed: {
@@ -117,8 +164,9 @@
 	100% { opacity: 1; }
 	}
 	.containList{
-		margin-top: 35px;
-		margin-bottom: 100px;
+		margin-top: 145px;
+		margin-bottom: 80px;
+		position: relative;
 	} 
 	.v-text-field.v-text-field--solo:not(.v-text-field--solo-flat) > .v-input__control > .v-input__slot {
 		box-shadow:  0px 5px 5px 0px rgb(0 0 0 / 5%) !important;    
@@ -156,4 +204,30 @@
 		color: white;
 		font-size: 22px;
 	}	
+	.containSearch{
+		position: relative;
+		background-color: var(--white-background);
+		position: fixed;
+		top: 0;
+		z-index: 99;
+		width: 90%;
+		max-width: 600px;
+		padding-top: 50px;
+
+	}
+	.containSearch i {
+		position: absolute;
+		z-index: 1;
+		left: 15px;
+		top: 67px;
+	font-size: 18px;
+	color: var(--disabled-grey);
+	}
+	.v-text-field.v-text-field--solo .v-input__control input {
+		padding-left: 35px;
+}
+.v-text-field.v-text-field--enclosed .v-text-field__details {
+
+    display: none;
+}
 </style>
