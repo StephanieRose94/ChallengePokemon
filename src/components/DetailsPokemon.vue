@@ -19,7 +19,7 @@
 				<v-card-actions class="d-flex justify-center pb-5">
 					<v-row>
 						<v-col cols="6" class="d-flex justify-start">
-							<v-btn rounded dark class="principal-button primary pa-5 " @click="goHome()">
+							<v-btn rounded dark class="principal-button primary pa-5 " @click="sharePokemon()">
 								<p class="mb-0">Share to my friends</p>
 							</v-btn>
 						</v-col>
@@ -35,6 +35,9 @@
 				</v-card-actions>
 			</v-card>
 		</v-dialog>
+		<v-snackbar v-model="snackbar" :timeout="timeout" color="warning">
+      <p class="text-center mb-0">copied pokemon!</p> 
+    </v-snackbar>
 	</div>
 </template>
 
@@ -51,7 +54,10 @@
 				imagePokemon:'',
 				name:'',
 				isOpen: true,
-				favorite:false
+				favorite:false,
+				snackbar: false,
+      text: 'My timeout is set to 2000.',
+      timeout: 1000,
 			}
 		},
 		props: {
@@ -102,6 +108,11 @@
 					const list = this.$store.getters.getFavorites;
 					this.favorite = list.includes(name)
 				},
+				sharePokemon() {
+      const details = `Pokemon: ${this.pokemon.name}, Weight: ${this.pokemon.weight}, Height: ${this.pokemon.height}, Types: ${this.typesNames} `;
+        navigator.clipboard.writeText(details)
+        this.snackbar = true
+    }
 			},
 			computed: {
 				typesNames() {
