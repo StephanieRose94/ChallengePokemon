@@ -37,7 +37,6 @@ export default {
     margin: auto;
     width: 90%;
     max-width: 600px;
-    position: relative;
   }
   h1{
     font-size: 36px;

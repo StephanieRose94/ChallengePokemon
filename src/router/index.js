@@ -7,21 +7,21 @@ import PokemonList from "@/components/PokemonList.vue";
 Vue.use(VueRouter);
 
 const routes = [
-    {
-        path: '/',
-        name: 'Welcome',
-        component: Welcome
-    },
-    {
-        path: '/PokemonList',
-        name: 'PokemonList',
-        component: PokemonList
-    }
+	{
+		path: '/',
+		name: 'Welcome',
+		component: Welcome
+	},
+	{
+		path: '/PokemonList',
+		name: 'PokemonList',
+		component: PokemonList
+	}
 ];
 
 const router = new VueRouter({
-    mode: 'history',
-    routes
+	mode: 'history',
+	routes
 });
 
 export default router;

@@ -35,5 +35,4 @@
 		width: auto;
 		margin: auto;
 	}
-
 </style>

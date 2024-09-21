@@ -1,5 +1,5 @@
 <template>
-  <v-overlay :value="loading" absolute opacity="opacity" color="white">
+  <v-overlay :value="loading" absolute opacity="opacity" color="white" class="d-flex align-center">
     <v-img cover :src="loaderUrl" class="pokeball"></v-img>
   </v-overlay>
 </template>

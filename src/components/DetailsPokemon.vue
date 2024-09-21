@@ -36,54 +36,51 @@
 			</v-card>
 		</v-dialog>
 		<v-snackbar v-model="snackbar" :timeout="timeout" color="warning">
-      <p class="text-center mb-0">copied pokemon!</p> 
-    </v-snackbar>
+			<p class="text-center mb-0">copied pokemon!</p> 
+		</v-snackbar>
 	</div>
 </template>
 
 <script>
 	import axios from "axios";
 
-
 	export default {
 		name:'DetailsPokemon',
 
 		data() {
 			return {
-				pokemon:{},
+				pokemon:[],
 				imagePokemon:'',
 				name:'',
 				isOpen: true,
 				favorite:false,
 				snackbar: false,
-      text: 'My timeout is set to 2000.',
-      timeout: 1000,
+				timeout: 1000,
 			}
 		},
 		props: {
-			id: {
+			pokemonName: {
 				type: String,
 				required: true,
 			},
 		},
 		watch: {
-		id: {
-			immediate: true,
-			handler(newId) {
-				if (newId) {
-					this.getPokemon(newId);
-				}
+			pokemonName: {
+				immediate: true,
+				handler(newName) {
+					if (newName) {
+						this.getPokemon(newName);
+					}
+				},
 			},
 		},
-	},
-	mounted() {
-			this.valFavorite()
-		},
+		mounted() {
+				this.valFavorite()
+			},
 		methods: {
-			async getPokemon(id){
+			async getPokemon(name){
 				try {
-					console.log(id);
-					axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`).then(res => {
+					axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`).then(res => {
 						this.pokemon = res.data
 						this.name = res.data.name
 						this.imagePokemon = res.data.sprites.other['official-artwork'].front_default
@@ -105,21 +102,24 @@
 				this.favorite = false
 			},
 			valFavorite(name) {
-					const list = this.$store.getters.getFavorites;
-					this.favorite = list.includes(name)
-				},
-				sharePokemon() {
-      const details = `Pokemon: ${this.pokemon.name}, Weight: ${this.pokemon.weight}, Height: ${this.pokemon.height}, Types: ${this.typesNames} `;
-        navigator.clipboard.writeText(details)
-        this.snackbar = true
-    }
+				const list = this.$store.getters.getFavorites;
+				this.favorite = list.includes(name)
 			},
-			computed: {
-				typesNames() {
+			sharePokemon() {
+				const details = `Pokemon: ${this.pokemon.name}, Weight: ${this.pokemon.weight}, Height: ${this.pokemon.height}, Types: ${this.typesNames} `;
+				navigator.clipboard.writeText(details)
+				this.snackbar = true
+			}
+		},
+		computed: {
+			typesNames() {
+				if (this.pokemon && this.pokemon.types) {
 					return this.pokemon.types.map(item => item.type.name).join(', ');
+				} else {
+					return ''; 
 				}
 			}
-
+		}
 	}
 </script>
 
