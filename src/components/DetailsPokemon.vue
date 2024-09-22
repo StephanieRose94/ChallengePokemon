@@ -24,11 +24,8 @@
 							</v-btn>
 						</v-col>
 						<v-col cols="6" class="d-flex justify-end">							
-							<div v-if="!favorite" class="containIcon" @click="addToFavorites(pokemon.name)">
-								<i class="fa-solid fa-star icon-star starDisactive"></i>
-							</div>
-							<div v-else class="containIcon" @click="removeToFavorites(pokemon.name)">
-								<i class="fa-solid fa-star icon-star starActive"></i>
+							<div class="containIcon" :class="favorite ? 'effectClick' : ''" @click="!favorite ? addToFavorites(pokemon.name) : removeToFavorites(pokemon.name)">
+								<i class="fa-solid fa-star icon-star" :class="!favorite ? 'starDisactive' : 'starActive'"></i>
 							</div>
 						</v-col>
 					</v-row>
@@ -145,6 +142,27 @@
 		top: 10px;
 		font-size: 26px;
 		right: 10px;
+	}
+	.effectClick{
+		animation: jump 0.6s ease;
+	}
+
+	@keyframes jump {
+		0% {
+			transform: translateY(0);
+		}
+		30% {
+			transform: translateY(-15px); 
+		}
+		50% {
+			transform: translateY(0);
+		}
+		70% {
+			transform: translateY(-7px);
+		}
+		100% {
+			transform: translateY(0);
+		}
 	}
 </style>
 

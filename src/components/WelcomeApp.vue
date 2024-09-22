@@ -20,7 +20,6 @@
 		},
 		methods: {
 			goList(){
-				console.log("click");
 				this.$router.push({ name: "PokemonList" });
 			}
 		},
